@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Zoo.h"
 #include "Enclosure.h"
+#include "Animals.h"
 #include <string>
 #include <algorithm>
 
@@ -14,35 +15,32 @@ int main() {
 
     populate_zoo(zoo);
 
-    // Display greetings from all enclosures
-    for (const auto& enclosure_pair : zoo.get_enclosures()) {
-        Enclosure* enclosure = enclosure_pair.second;
-        enclosure->print_greeting();
-        std::cout << "-------------------\n" << std::endl;
-    }
-
     zoo_loop(zoo);
 
     return 0;
 }
 
 void populate_zoo(Zoo& zoo) {
-    Enclosure* LionEnclosure = new Enclosure("Lion", 1, "Tropical", true, 30.0, { "Lion", "Lioness" }, nullptr, nullptr);
-    Enclosure* ElephantEnclosure = new Enclosure("Elephant", 2, "Tropical", true, 30.0, { "Elephant", "Elephant" }, nullptr, nullptr);
-    Enclosure* GiraffeEnclosure = new Enclosure("Giraffe", 3, "Tropical", true, 30.0, { "Giraffe", "Giraffe" }, nullptr, nullptr);
+    Animal* elephant = new Elephant("Dumbo", 10);
+    Animal* lion = new Lion("Simba", 5);
+    Animal* giraffe = new Giraffe("Gerald", 7);
 
-    // Set neighbours for each enclosure
-    LionEnclosure->set_neighbours(ElephantEnclosure, "right");
-    ElephantEnclosure->set_neighbours(LionEnclosure, "left");
-    ElephantEnclosure->set_neighbours(GiraffeEnclosure, "right");
-    GiraffeEnclosure->set_neighbours(ElephantEnclosure, "left");
+    Enclosure* elephant_enclosure = new Enclosure(elephant->getSpecies(), 1, "Tropical", true, 25.0, { elephant->getName() }, nullptr, nullptr, elephant);
 
-    zoo.add_enclosure(LionEnclosure);
-    zoo.add_enclosure(ElephantEnclosure);
-    zoo.add_enclosure(GiraffeEnclosure);
+    Enclosure* lion_enclosure = new Enclosure(lion->getSpecies(), 2, "Savannah", false, 30.0, { lion->getName() }, nullptr, nullptr, lion);
 
-    // Set neighbours for each enclosure
+    Enclosure* giraffe_enclosure = new Enclosure(giraffe->getSpecies(), 3, "Savannah", true, 30.0, { giraffe->getName() }, nullptr, nullptr, giraffe);
+
+    elephant_enclosure->set_neighbours(lion_enclosure, "right");
+    lion_enclosure->set_neighbours(giraffe_enclosure, "right");
+    lion_enclosure->set_neighbours(elephant_enclosure, "left");
+    giraffe_enclosure->set_neighbours(lion_enclosure, "left");
+
+    zoo.add_enclosure(elephant_enclosure);
+    zoo.add_enclosure(lion_enclosure);
+    zoo.add_enclosure(giraffe_enclosure);
 }
+
 
 void zoo_loop(Zoo zoo) {
     Enclosure* current_enclosure = nullptr;
@@ -52,24 +50,24 @@ void zoo_loop(Zoo zoo) {
         std::string command;
         std::cin >> command;
 
-        // Pointer to the current enclosure being visited
-
-        //visit enclosure
         if (command == "visit") {
             std::cout << "Which enclosure would you like to visit? ";
             std::string enclosure_name;
             std::cin >> enclosure_name;
 
-            // Convert enclosure name to lowercase for case-insensitive comparison
             std::transform(enclosure_name.begin(), enclosure_name.end(), enclosure_name.begin(), ::tolower);
 
-            if (zoo.get_enclosure(enclosure_name) != nullptr) {
-                current_enclosure = zoo.get_enclosure(enclosure_name);
+            current_enclosure = zoo.get_enclosure_by_name(enclosure_name);
+
+            if (current_enclosure != nullptr) {
                 current_enclosure->print_greeting();
             }
             else {
                 std::cout << "Enclosure not found" << std::endl;
             }
+        }
+        else if (command == "list") {
+            zoo.list_enclosures();
         }
         else if (command == "right") {
             if (current_enclosure == nullptr) {
@@ -112,5 +110,5 @@ void zoo_loop(Zoo zoo) {
         else {
             std::cout << "Invalid command" << std::endl;
         }
-    };
+    }
 }

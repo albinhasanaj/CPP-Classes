@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "Animal.h"
 
 class Enclosure {
 public:
@@ -14,22 +15,26 @@ public:
         float temperature,
         const std::vector<std::string>& animal_list,
         Enclosure* left_neighbour,
-        Enclosure* right_neighbour
+        Enclosure* right_neighbour,
+        Animal* animal // Add Animal reference
     )
         // --- Initialize Enclosure properties ---
         : name(name), number(number), climate(climate), has_roof(has_roof), temperature(temperature),
-        animal_list(animal_list), left_neighbour(left_neighbour), right_neighbour(right_neighbour) {};
+        animal_list(animal_list), left_neighbour(left_neighbour), right_neighbour(right_neighbour), animal(animal) {};
 
 
     ~Enclosure() {
         std::cout << "Enclosure " << name << " destroyed" << std::endl;
     }
 
-    // Getter functions
     void print_greeting() {
-        std::cout << "Welcome to the " << name << " Enlosure" << std::endl;
+        std::cout << "\nWelcome to the " << name << " Enclosure" << std::endl;
         std::cout << "The climate is " << climate << std::endl;
         std::cout << "The temperature is " << temperature << " degrees" << std::endl;
+        // Show the image of the animal
+        if (animal) {
+            animal->showEnclosure();
+        }
     }
 
     void set_neighbours(Enclosure* enclosure, std::string direction) {
@@ -63,4 +68,5 @@ private:
     std::vector<std::string> animal_list;
     Enclosure* left_neighbour;
     Enclosure* right_neighbour;
+    Animal* animal; // Add reference to the associated Animal
 };

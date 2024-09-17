@@ -22,13 +22,20 @@ public:
         return info;
     }
 
+    void list_enclosures() {
+        std::cout << "Enclosures in the Zoo:" << std::endl;
+        for (const auto& pair : enclosure_list) {
+            std::cout << pair.first << std::endl;
+        }
+    }
+
     void add_enclosure(Enclosure* enclosure) {
         std::string lower_case_name = enclosure->get_name();
         std::transform(lower_case_name.begin(), lower_case_name.end(), lower_case_name.begin(), ::tolower);
         enclosure_list[lower_case_name] = enclosure;
     }
 
-    Enclosure* get_enclosure(const std::string& name) {
+    Enclosure* get_enclosure_by_name(const std::string& name) {
         std::string lower_case_name = name;
         std::transform(lower_case_name.begin(), lower_case_name.end(), lower_case_name.begin(), ::tolower);
         auto it = enclosure_list.find(lower_case_name);
@@ -38,14 +45,13 @@ public:
         return nullptr;
     }
 
-    // Get all enclosures (map)
     std::map<std::string, Enclosure*> get_enclosures() {
         return enclosure_list;
     }
 
 
     ~Zoo() {
-        // Delete all dynamically allocated Enclosure objects
+        // Delete all Enclosures from heap memory
         for (auto& pair : enclosure_list) {
             delete pair.second;
         }
